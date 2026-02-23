@@ -13,8 +13,6 @@ This project is a modular machine learning pipeline designed to forecast daily s
 
 ## Project Architecture
 
-[Image of machine learning pipeline architecture]
-
 ```text
 stock_prediction_project/
 ├── data/                  
