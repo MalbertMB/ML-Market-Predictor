@@ -11,7 +11,8 @@ Author: Albert Marín Blasco
 
 import pandas as pd
 
-from src import AlpacaDataLoader, DataPreprocessor, ResultPlotter, SimpleBacktester, RandomForestStockModel, XGBoostStockModel, calculate_metrics, print_metrics
+from src import BaseStockModel, AlpacaDataLoader, DataPreprocessor, ResultPlotter, SimpleBacktester, RandomForestStockModel, XGBoostStockModel
+from src import calculate_metrics, print_metrics
 
 
 def main():
@@ -34,7 +35,7 @@ def main():
     X_train, X_test, y_train, y_test, full_X = preprocessor.split_data(processed_df)
     
     # 4. Define Models to Evaluate
-    models_to_test = {
+    models_to_test: dict[str, BaseStockModel] = {
         "Random Forest": RandomForestStockModel(n_estimators=300, max_depth=10),
         "XGBoost": XGBoostStockModel(n_estimators=300, learning_rate=0.05),
     }
@@ -43,23 +44,17 @@ def main():
     for model_name, model in models_to_test.items():
         print(f"\n========== Evaluating {model_name} ==========")
         
-        # Train & Predict
         model.train(X_train, y_train)
         predictions = model.predict(X_test)
         
-        # Calculate Error Metrics
         metrics = calculate_metrics(y_test, predictions)
         print_metrics(metrics, model_name)
         
-        # Run Backtest Simulation
-        # We pass the current day's close price, tomorrow's predicted price, and tomorrow's actual price
         current_prices = X_test['close']
         backtest_results = backtester.simulate_trading(current_prices, predictions, y_test)
         
-        # Plot Results Dashboard (Predictions + Backtest)
         plotter.plot_results(y_test, predictions, backtest_results, SYMBOL, model_name)
         
-        # Predict Tomorrow's Price
         latest_data = full_X.iloc[-1:]
         tomorrow_prediction = model.predict(latest_data)[0]
         print(f"--> Predicted next closing price for {SYMBOL} using {model_name}: ${tomorrow_prediction:.2f}")

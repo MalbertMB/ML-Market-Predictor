@@ -22,10 +22,14 @@ class DataPreprocessor:
         self.features = ["close", "volume", "return", "volatility", "ma_5", "ma_10", "ma_20"]
         self.processed_data_dir = processed_data_dir
         
-        # Ensure the processed data directory exists
         os.makedirs(self.processed_data_dir, exist_ok=True)
         
     def engineer_features(self, df: pd.DataFrame, symbol: str) -> pd.DataFrame:
+        """
+        Creates technical indicators and target variable for the dataset. It computes returns, volatility, moving averages,
+        and shifts the close price to create the target variable.
+        """
+
         print("Engineering features...")
         df = df.copy()
         
@@ -37,7 +41,6 @@ class DataPreprocessor:
         df["target"] = df["close"].shift(-1)
         df = df.dropna()
         
-        # Save the finalized, clean dataset
         file_path = os.path.join(self.processed_data_dir, f"{symbol}_processed.csv")
         print(f"Saving processed feature set to {file_path}...")
         df.to_csv(file_path, index=False)
@@ -45,6 +48,10 @@ class DataPreprocessor:
         return df
         
     def split_data(self, df: pd.DataFrame):
+        """
+        Splits the dataset into training and testing sets based on the specified test size and shuffle parameters.
+        """
+
         print(f"Splitting data into train and test sets (Test size: {self.test_size * 100}%)...")
         X = df[self.features]
         y = df["target"]

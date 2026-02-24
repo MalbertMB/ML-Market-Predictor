@@ -24,21 +24,20 @@ class AlpacaDataLoader:
         self.client = StockHistoricalDataClient(ALPACA_API_KEY, ALPACA_SECRET_KEY)
         self.raw_data_dir = raw_data_dir
         
-        # Ensure the raw data directory exists
         os.makedirs(self.raw_data_dir, exist_ok=True)
         
     def fetch_historical_data(self, symbol: str, start_date: str, end_date: str, use_cache: bool = True) -> pd.DataFrame:
-        # Create a unique filename for this specific data request
+        """
+        Fetches historical stock data for a given symbol and date range. It first checks if the data is cached locally;
+        if not, it fetches from the Alpaca API and saves it for future use.
+        """
         filename = f"{symbol}_{start_date}_to_{end_date}.csv"
         file_path = os.path.join(self.raw_data_dir, filename)
         
-        # 1. Check if we already have this data saved locally
         if use_cache and os.path.exists(file_path):
             print(f"Loading cached raw data for {symbol} from {file_path}...")
-            # Alpaca returns a 'timestamp' column, so we ensure pandas parses it as a datetime object
             return pd.read_csv(file_path, parse_dates=['timestamp'])
             
-        # 2. If not cached, fetch from the API
         print(f"Data not found locally. Fetching {symbol} from Alpaca API...")
         request_params = StockBarsRequest(
             symbol_or_symbols=symbol,
@@ -51,7 +50,6 @@ class AlpacaDataLoader:
         df = bars.df.reset_index()
         df = df[df['symbol'] == symbol].copy()
         
-        # 3. Save the fetched data to our raw folder for the next time we run the script
         print(f"Saving raw data to {file_path}...")
         df.to_csv(file_path, index=False)
         
