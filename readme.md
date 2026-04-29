@@ -6,7 +6,7 @@ This project is a modular machine learning pipeline designed to forecast daily s
 ## Key Features
 * **Automated Data Pipeline:** Fetches and caches historical daily bars via the Alpaca API to optimize speed and reduce API calls.
 * **Feature Engineering:** Calculates rolling volatility, daily percentage returns, and standard moving averages (5-day, 10-day, 20-day).
-* **Predictive Modeling:** Implements robust tree-based machine learning algorithms (Random Forest and XGBoost) through a unified model interface.
+* **Predictive Modeling:** Implements robust two-based machine learning algorithms (Random Forest and XGBoost) through a unified model interface.
 * **Financial Metrics:** Evaluates accuracy using Mean Absolute Error (USD) and Average Percentage Error.
 * **Strategy Backtesting:** Simulates portfolio growth based on model predictions to measure practical trading viability.
 * **Interactive Visualization:** Generates stacked, interactive Plotly dashboards displaying price predictions alongside the simulated equity curve.
